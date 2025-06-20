@@ -13,3 +13,4 @@ class Settings(BaseSettings):
     redis_url: str
     backend_url: str
     environment: str = "development"
+    cors_allow_origins: str

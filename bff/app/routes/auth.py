@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from fastapi.responses import RedirectResponse
 
+from app.core.security import get_current_user
+from app.models.auth import StatusResponse
 from app.services.authentication import BaseAuthenticationService, get_auth_service
 from app.services.tokens import TokenManager
 
@@ -37,3 +39,11 @@ async def authenticate_user(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=f"An error occurred during authentication: {str(e)}",
         )
+
+
+@router.post("/status")
+async def is_authenticated(request: Request, user_id: str = Depends(get_current_user)) -> StatusResponse:
+    user_id = await get_current_user(request)
+    return StatusResponse(
+        is_authenticated=user_id is not None,
+    )

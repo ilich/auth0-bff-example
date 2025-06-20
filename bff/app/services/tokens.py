@@ -27,13 +27,14 @@ class TokenManager:
         refresh_token_key = f"refresh_token:{session_id}"
         refresh_token = self.crypto.encrypt(token.refresh_token)
         await self.cache.set(refresh_token_key, refresh_token)
-        secure_cookie = self.config.environment != "development"
+        # samesite = "Lax"
+        samesite = "None"  # Use None to allow cross-site cookies
         resposne.set_cookie(
             key="session_id",
             value=session_id,
             httponly=True,
-            secure=secure_cookie,
-            samesite="Lax",
+            secure=True,
+            samesite=samesite,
         )
 
     async def refresh(self, request: Request):

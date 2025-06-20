@@ -5,7 +5,7 @@ from fastapi import HTTPException, Request
 from app.services.tokens import TokenManager
 
 
-async def get_current_user(request: Request) -> bool:
+async def get_current_user(request: Request) -> str:
     try:
         token_manager = TokenManager()
         user_id = await token_manager.get_user_id(request)

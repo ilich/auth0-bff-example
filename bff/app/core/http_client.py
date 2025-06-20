@@ -8,6 +8,7 @@ from app.services.tokens import TokenManager
 
 class SecureHttpClient(httpx.AsyncClient):
     def __init__(self, request: Request, *args, **kwargs):
+        kwargs.setdefault("verify", False)
         super().__init__(*args, **kwargs)
         self.http_request = request
         self.token_manager = TokenManager()

@@ -1,6 +1,7 @@
 import logging
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.models.settings import Settings
@@ -12,6 +13,13 @@ app = FastAPI()
 
 # Initialize settings and middleware
 config = Settings()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=config.cors_allow_origins.split(","),
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.add_middleware(SessionMiddleware, secret_key=config.app_secret_key)
 auth_service = get_auth_service()
 auth_service.setup()
