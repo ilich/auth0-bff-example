@@ -7,5 +7,19 @@ class UserTokens(BaseModel):
     refresh_token: str | None = None
 
 
-class StatusResponse(BaseModel):
+class AuthStatusResponse(BaseModel):
     is_authenticated: bool
+
+
+class SendOtpRequest(BaseModel):
+    email: str
+
+
+class VerifyOtpRequest(BaseModel):
+    email: str
+    otp: str
+
+
+class OtpResponse(BaseModel):
+    message: str
+    success: bool

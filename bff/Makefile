@@ -1,8 +1,6 @@
 run:
 	uv run uvicorn app.main:app --reload \
- 		--port 8001 \
-		--ssl-keyfile=../certs/localhost-key.pem \
- 		--ssl-certfile=../certs/localhost.pem
+ 		--port 8001
 
 lint:
 	uv run ruff check .
