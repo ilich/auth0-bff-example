@@ -118,10 +118,24 @@ class Auth0AuthenticationService(BaseAuthenticationService):
                 logging.info(f"OTP verified successfully for {email}.")
                 return user_tokens
         except Exception as e:
-            logging.error(f"Error verifying OTP: {str(e)}", exc_info=True)
+            DEFAULT_ERROR_MSG = "Error verifying phone number. Please try again later."
+            if isinstance(e, httpx.HTTPStatusError):
+                auth0_error = e.response.json()
+                status_code = e.response.status_code
+                logging.error(
+                    f"Error verifying OTP. HTTP status code: {status_code}. Message: {auth0_error}", exc_info=True
+                )
+                if status_code == status.HTTP_429_TOO_MANY_REQUESTS:
+                    error_msg = "Too many request attempts in the last 10 minutes. Please try again later."
+                else:
+                    error_msg = auth0_error.get("error_description", DEFAULT_ERROR_MSG)
+            else:
+                logging.error(f"Error verifying OTP: {str(e)}", exc_info=True)
+                error_msg = DEFAULT_ERROR_MSG
+
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid email or OTP. Please try again.",
+                detail=error_msg,
             )
 
     async def callback(self, request: Request) -> UserTokens:
